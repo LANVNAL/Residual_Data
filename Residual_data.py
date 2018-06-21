@@ -12,29 +12,25 @@ import re
 
 
 
-TOKEN = 'xxxxxx'
+TOKEN = 'xxxx'
 updater = Updater(token=TOKEN)
 dispatcher = updater.dispatcher
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',level=logging.INFO)
 
-cookies = {
-    'PHPSESSID':'xxxxxxx',
-    'UM_distinctid':'xxxxx',
-    'CNZZDATA1260364996':'xxxx',
-    'Hm_lvt_e9ce8276ca2c4f210d70c15e8e788b63':'xxxxx',
-    'Hm_lpvt_e9ce8276ca2c4f210d70c15e8e788b63':'xxxxx'
-}
-header = {
-    'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5)',
-    'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-    'Referer':'http://kingss.vip/index.php/control/index/',
-    'Accept-Language':'zh-CN,zh;q=0.9'
-}
 
-url = 'http://kingss.vip/index.php/control/detail/xxxx/'
+def login():
+    global S
+    username = 'xxxx'
+    password = 'xxxx'
+    login_url =  "http://kingss.vip:80/index/login/"
+    S = requests.Session()
+    login_data = {"swapname": username, "swappass": password}
+    S.post(login_url,data=login_data)
 
 def Inquire():
-    rqs = requests.get(url = url,headers = header,cookies = cookies)
+    global S
+    url = 'http://kingss.vip/index.php/control/detail/63472/'
+    rqs = S.get(url = url)
     #rqs.encoding='utf-8'
     data = rqs.text
     #data = unicode(data)
@@ -66,27 +62,26 @@ def help(bot, update):
 
 @command(CommandHandler,'data')
 def data(bot, update):
+    login()
     used_data,remain_data = Inquire()
     text = '已用流量:' + used_data + ' GB | 剩余流量:' + remain_data + ' GB'
     bot.send_message(chat_id=update.message.chat_id, text=text)
 
 @command(MessageHandler,Filters.text)
 def echo(bot, update):
-	file=open('/root/1.txt','a')
-	file.write(update.message.text+'\n')
-	file.close()
-	bot.send_message(chat_id=update.message.chat_id, text=update.message.text)
+    file=open('/root/1.txt','a')
+    file.write(update.message.text+'\n')
+    file.close()
+    bot.send_message(chat_id=update.message.chat_id, text=update.message.text)
 
 @command(CommandHandler,'caps',pass_args=True)
 def caps(bot,update,args):
-	text_caps=' '.join(args).upper()
-	bot.sendMessage(chat_id=update.message.chat_id,text=text_caps)
+    text_caps=' '.join(args).upper()
+    bot.sendMessage(chat_id=update.message.chat_id,text=text_caps)
 
 updater.start_polling()
 
-while True:
-    time.sleep(1800)
-    Inquire()
+
 
 
 
